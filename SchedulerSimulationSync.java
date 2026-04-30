@@ -199,7 +199,8 @@ SharedResources.incrementContextSwitch();    }
             // Always release in finally block to prevent deadlocks!
         }
     }
-    
+
+
     private String createProgressBar(int progress, int width) {
         int filled = (progress * width) / 100;
         StringBuilder bar = new StringBuilder("[");
