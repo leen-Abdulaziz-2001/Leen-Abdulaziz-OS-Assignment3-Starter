@@ -134,20 +134,13 @@ class Process implements Runnable {
         
         
         try {
-              SharedResources.cpuSemaphore.acquire();
+           SharedResources.cpuSemaphore.acquire();
 
-    
-            if (startTime == -1) {
-                startTime = System.currentTimeMillis();
-            }
-            
-            // Increment context switch counter
-        
-
-SharedResources.incrementContextSwitch();
-        } finally {
-    SharedResources.cpuSemaphore.release();
+if (startTime == -1) {
+    startTime = System.currentTimeMillis();
 }
+
+SharedResources.incrementContextSwitch();    }
             
             int runTime = Math.min(timeQuantum, remainingTime);
             
