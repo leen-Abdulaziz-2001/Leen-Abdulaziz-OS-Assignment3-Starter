@@ -59,7 +59,7 @@ public static final Semaphore cpuSemaphore = new Semaphore(2);
         lock.unlock();
     }
 
-        contextSwitchCount++;
+        
     }
     
     // Method to increment completed process counter
@@ -73,7 +73,7 @@ public static final Semaphore cpuSemaphore = new Semaphore(2);
         lock.unlock();
     }
 
-        completedProcessCount++;
+       
     }
     
     // Method to add waiting time
@@ -87,7 +87,7 @@ public static final Semaphore cpuSemaphore = new Semaphore(2);
         lock.unlock();
     }
 
-        totalWaitingTime += time;
+        
     }
     
     // Method to log execution
@@ -101,7 +101,7 @@ public static final Semaphore cpuSemaphore = new Semaphore(2);
         lock.unlock();
     }
 
-        executionLog.add(message);
+    // executionLog.add(message);
     }
 }
 
@@ -129,17 +129,25 @@ class Process implements Runnable {
     @Override
     public void run() {
         // TODO #3: Acquire CPU semaphore before executing
-        SharedResources.cpuSemaphore.acquire();
+      
         // This ensures only allowed number of processes run simultaneously
         
         
         try {
+              SharedResources.cpuSemaphore.acquire();
+
+    
             if (startTime == -1) {
                 startTime = System.currentTimeMillis();
             }
             
             // Increment context switch counter
-            SharedResources.incrementContextSwitch();
+        
+
+SharedResources.incrementContextSwitch();
+        } finally {
+    SharedResources.cpuSemaphore.release();
+}
             
             int runTime = Math.min(timeQuantum, remainingTime);
             
