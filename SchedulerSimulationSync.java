@@ -79,6 +79,14 @@ public static final Semaphore cpuSemaphore = new Semaphore(2);
     // Method to add waiting time
     public static void addWaitingTime(long time) {
         // TODO: Protect this critical section with a lock
+        
+    lock.lock();
+    try {
+        totalWaitingTime += time;
+    } finally {
+        lock.unlock();
+    }
+
         totalWaitingTime += time;
     }
     
