@@ -83,8 +83,7 @@ public static final Semaphore cpuSemaphore = new Semaphore(2);
     lock.lock();
     try {
         totalWaitingTime += time;
-  } catch (InterruptedException e) {
-    e.printStackTrace();
+  
 } finally {
         lock.unlock();
     }
