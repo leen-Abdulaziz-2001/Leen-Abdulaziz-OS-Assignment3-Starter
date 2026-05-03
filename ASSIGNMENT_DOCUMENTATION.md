@@ -1,7 +1,8 @@
 # Assignment 3 - Complete Documentation
 
-**Student Name**: [Your Full Name]  
-**Student ID**: [Your ID]  
+**Student Name**: [Leen Abdaluziz]  
+**Student ID**: [
+445052011 ID]  
 **Date Submitted**: [Submission Date]
 
 ---
@@ -33,66 +34,66 @@ Document your development process with **minimum 3 entries** showing progression
 
 ### Entry 1 - [Date, Time]
 **What I implemented**: 
-
+Created shared resources class with Lock and Semaphore
 **Challenges encountered**: 
-
+Understanding what should be shared between threads 
 **How I solved it**: 
+Identified counters and execution log as shared data
+**Testing approach**: Ran basic program execution
 
-**Testing approach**: 
-
-**Time spent**: 
+**Time spent**: 2 hour
 
 ---
 
 ### Entry 2 - [Date, Time]
-**What I implemented**: 
+**What I implemented**: Added ReentrantLock for protecting shared variables
 
-**Challenges encountered**: 
+**Challenges encountered**: Confusion between lock and semaphore usage
 
-**How I solved it**: 
+**How I solved it**: Used lock only for counters and list
 
-**Testing approach**: 
+**Testing approach**: Checked consistency of values
 
 **Time spent**: 
-
+1 hour
 ---
 
 ### Entry 3 - [Date, Time]
-**What I implemented**: 
+**What I implemented**: Implemented Semaphore for CPU scheduling
 
-**Challenges encountered**: 
+**Challenges encountered**: Understanding acquire and release behavior
 
-**How I solved it**: 
+**How I solved it**: Used try-finally to avoid deadlock
 
-**Testing approach**: 
+**Testing approach**: Ran multiple processes concurrently
 
-**Time spent**: 
+**Time spent**: 1.5 hours
 
 ---
 
 ### Entry 4 - [Date, Time]
-**What I implemented**: 
+**What I implemented**: Fixed race conditions in shared counters
 
-**Challenges encountered**: 
+**Challenges encountered**: Incorrect updates in multi-thread execution
 
-**How I solved it**: 
+**How I solved it**: Wrapped updates with lock
 
-**Testing approach**: 
+**Testing approach**: Repeated runs and compared result
 
-**Time spent**: 
+**Time spent**: 1 hour
 
 ---
 
 ### Entry 5 - [Date, Time]
-**What I implemented**: 
+**What I implemented**: Final debugging and synchronization testing.
 
-**Challenges encountered**: 
+**Challenges encountered**: InterruptedException handling
 
-**How I solved it**: 
+**How I solved it**: Used try-catch for acquire and sleep
 
-**Testing approach**: 
+**Testing approach**: Stress testing with multiple runs.
 
-**Time spent**: 
+**Time spent**: 2 hours
 
 ---
 
@@ -106,7 +107,8 @@ Document your development process with **minimum 3 entries** showing progression
 
 **Your Answer**:
 
-[Your answer here - 4-6 sentences with code examples]
+[Your answer here - 4-6 sentences with code examples
+Race conditions exist in contextSwitchCount, completedProcessCount, and totalWaitingTime. These variables are shared between multiple threads. Without synchronization, two threads may update values at the same time causing lost updates. For example, two processes incrementing contextSwitchCount simultaneously may overwrite each other, resulting in incorrect final count]
 
 ---
 
@@ -115,7 +117,8 @@ Document your development process with **minimum 3 entries** showing progression
 
 **Your Answer**:
 
-[Your answer here - explain your implementation choices]
+[Your answer here - explain your implementation choices
+ReentrantLock is used to protect shared data (counters and execution log) to ensure mutual exclusion. Semaphore is used to control how many processes can access the CPU simultaneously. Lock is for data safety, while semaphore is for resource limiting.]
 
 ---
 
@@ -124,7 +127,11 @@ Document your development process with **minimum 3 entries** showing progression
 
 **Your Answer**:
 
-[Your answer here - reference try-finally blocks, lock ordering, etc.]
+[Your answer here - reference try-finally blocks, lock ordering, etc.
+Deadlock is when threads wait forever for resources held by each other. I prevented it using:
+try-finally blocks to ensure locks are always released
+consistent locking (single lock for shared counters)
+Also semaphore is released in finally block to avoid blocking.]
 
 ---
 
@@ -137,7 +144,9 @@ Document your development process with **minimum 3 entries** showing progression
 
 **Your Answer**:
 
-[Your answer here - explain coarse-grained vs fine-grained locking, independence of counters, concurrency implications. Show understanding of when to use each approach. 5-8 sentences expected.]
+[Your answer here - explain coarse-grained vs fine-grained locking, independence of counters, concurrency implications. Show understanding of when to use each approach. 5-8 sentences expected.
+
+I used ONE coarse-grained lock for all counters. This simplifies synchronization and avoids complexity. The disadvantage is reduced concurrency because all counters are locked together. However, since updates are fast and small, performance impact is minimal. Fine-grained locking could improve concurrency but increases risk of deadlocks. Since counters are independent, fine-grained locking would theoretically give better performance, but complexity is not worth it here.]
 
 ---
 
@@ -145,13 +154,21 @@ Document your development process with **minimum 3 entries** showing progression
 
 ### Critical Section #1: Counter Variables
 
-**Which variables**: 
 
-**Why they need protection**: 
+**Which variables**: contextSwitchCount, completedProcessCount, totalWaitingTime
 
-**Synchronization mechanism used**: 
+**Why they need protection**: shared between threads
+
+**Synchronization mechanism used**: ReentrantLock
+
 
 **Code snippet**:
+lock.lock();
+try {
+    contextSwitchCount++;
+} finally {
+    lock.unlock();
+}
 ```java
 // Paste your implementation here
 ```
@@ -162,13 +179,19 @@ Document your development process with **minimum 3 entries** showing progression
 
 ### Critical Section #2: Execution Log
 
-**What resource**: 
+**What resource**: executionLog (ArrayList)
 
-**Why it needs protection**: 
+**Why it needs protection**: not thread-safe
 
 **Synchronization mechanism used**: 
-
+ReentrantLock
 **Code snippet**:
+lock.lock();
+try {
+    executionLog.add(message);
+} finally {
+    lock.unlock();
+}
 ```java
 // Paste your implementation here
 ```
@@ -180,17 +203,20 @@ Document your development process with **minimum 3 entries** showing progression
 ### Critical Section #3: CPU Semaphore
 
 **Purpose of semaphore**: 
+limit number of running processes
+**Number of permits and why**: 2 (controls concurrency)
 
-**Number of permits and why**: 
 
-**Where implemented**: 
+**Where implemented**: Process.run
 
-**Code snippet**:
+**Code snippet**:SharedResources.cpuSemaphore.acquire();
+...
+SharedResources.cpuSemaphore.release();
 ```java
 // Paste your implementation here
 ```
 
-**Effect on program behavior**: 
+**Effect on program behavior**: only 2 processes run at same time
 
 ---
 
@@ -198,58 +224,63 @@ Document your development process with **minimum 3 entries** showing progression
 
 ### Test 1: Consistency Check
 **What I tested**: Running program multiple times to verify consistent results
-
-**Testing procedure**: 
+multiple runs consistency
+**Testing procedure**: ran program 5 times
 ```bash
 # Commands used (run the program at least 5 times)
 ```
 
-**Results**: 
+**Results**: consistent final counts
 (Show that running multiple times produces consistent, correct results)
 
 **Why synchronization is necessary**: 
 (Explain what race conditions COULD occur without synchronization, even if you didn't observe them. Explain which shared resources need protection and why.)
 
-**Conclusion**: 
+**Conclusion**: synchronization prevents race conditions
 
 ---
 
 ### Test 2: Exception Testing
 **What I tested**: Checking for ConcurrentModificationException
-
+ConcurrentModificationException
 **Testing procedure**: 
 
-**Results**: 
+**Results**: no exception occurred
 
-**What this proves**: 
+**What this proves**: executionLog is safely synchronized
 
 ---
 
 ### Test 3: Correctness Verification
 **What I tested**: Verifying correct final values (total burst time, context switches, etc.)
 
-**Expected values**: 
 
-**Actual values**: 
+**Expected values**: correct totals of processes and waiting time
 
-**Analysis**: 
+**Actual values**: matched expected values
+
+**Analysis**: synchronization ensured correctness
 
 ---
 
 ### Test 4: Different Scenarios
 **Scenario tested**: [e.g., different time quantum, more processes, etc.]
-
+increased processe
 **Purpose**: 
 
-**Results**: 
+**Results**: stable execution with no crashes
 
-**What I learned**: 
+**What I learned**: semaphore controls system load
 
 ---
 
 ## Part 5: Reflection and Learning
+Synchronization ensures safe access to shared resources in multi-threaded programs. Without it, data corruption occurs due to race conditions. Using locks and semaphores helped control both data integrity and CPU usage. I learned how critical thread safety is in operating systems
 
-### What I learned about synchronization:
+### What I learned about synchronization:Real world examples:
+Banking systems updating balances
+Operating system process scheduling
+Synchronization can be explained as “many people using one bathroom — lock ensures only one inside at a time”.
 
 [6-8 sentences about key concepts, challenges, insights]
 
@@ -260,8 +291,8 @@ Document your development process with **minimum 3 entries** showing progression
 Give TWO examples where synchronization is critical:
 
 **Example 1**: 
-
-**Example 2**: 
+Banking systems updating balances
+**Example 2**: Operating system process scheduling
 
 ---
 
@@ -278,25 +309,25 @@ Give TWO examples where synchronization is critical:
 **Number of commits**: 
 
 **Commit messages**: 
-1. 
-2. 
-3. 
-4. 
+1. Initial code
+2. Added synchronization
+3. Fixed race conditions
+4. Final testing
 
 ---
 
 ## Summary
 
 **Total time spent on assignment**: 
-
+4-6 hours
 **Key takeaways**: 
-1. 
-2. 
-3. 
+1. Locks prevent race conditions
+2. Semaphores control concurrency
+3. try-finally prevents deadlocks
 
 **Most challenging aspect**: 
-
-**What I'm most proud of**: 
+understanding threading behavior
+**What I'm most proud of**: working scheduler simulation
 
 ---
 
