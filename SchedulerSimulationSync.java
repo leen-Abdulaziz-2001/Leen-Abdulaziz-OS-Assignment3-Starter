@@ -138,9 +138,8 @@ class Process implements Runnable {
 
 if (startTime == -1) {
     startTime = System.currentTimeMillis();
-}
 
-SharedResources.incrementContextSwitch();    }
+    SharedResources.incrementContextSwitch();
             
             int runTime = Math.min(timeQuantum, remainingTime);
             
