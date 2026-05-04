@@ -321,7 +321,7 @@ Synchronization is like organizing access to shared things so no one interferes 
 
 **Repository URL**: https://github.com/leen-Abdulaziz-2001/Leen-Abdulaziz-OS-Assignment3-Starter
 
-**Number of commits**: 
+**Number of commits**:  19 commits
 
 **Commit messages**: 
 1. Initial code
