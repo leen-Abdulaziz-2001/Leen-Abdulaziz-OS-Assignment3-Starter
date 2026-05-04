@@ -32,7 +32,7 @@
 
 Document your development process with **minimum 3 entries** showing progression:
 
-### Entry 1 - [Date, Time]
+### Entry 1 - [2 may, 8:00]
 **What I implemented**: 
 Created shared resources class with Lock and Semaphore
 **Challenges encountered**: 
@@ -45,7 +45,7 @@ Identified counters and execution log as shared data
 
 ---
 
-### Entry 2 - [Date, Time]
+### Entry 2 - [2 may,8:30]
 **What I implemented**: Added ReentrantLock for protecting shared variables
 
 **Challenges encountered**: Confusion between lock and semaphore usage
@@ -58,7 +58,7 @@ Identified counters and execution log as shared data
 1 hour
 ---
 
-### Entry 3 - [Date, Time]
+### Entry 3 - [2 may, 9:15]
 **What I implemented**: Implemented Semaphore for CPU scheduling
 
 **Challenges encountered**: Understanding acquire and release behavior
@@ -71,7 +71,7 @@ Identified counters and execution log as shared data
 
 ---
 
-### Entry 4 - [Date, Time]
+### Entry 4 - [2 may, 10:00]
 **What I implemented**: Fixed race conditions in shared counters
 
 **Challenges encountered**: Incorrect updates in multi-thread execution
@@ -84,7 +84,7 @@ Identified counters and execution log as shared data
 
 ---
 
-### Entry 5 - [Date, Time]
+### Entry 5 - [3 may, 7:00]
 **What I implemented**: Final debugging and synchronization testing.
 
 **Challenges encountered**: InterruptedException handling
@@ -101,9 +101,9 @@ Identified counters and execution log as shared data
 
 ### Question 1: Race Conditions
 **Q**: Identify and explain TWO race conditions in the original code. For each:
-- What shared resource is affected?
-- Why is concurrent access a problem?
-- What incorrect behavior could occur?
+- What shared resource is affected? The shared resources are contextSwitchCount and totalWaitingTime, which are accessed and modified by multiple threads.
+- Why is concurrent access a problem? Concurrent access is a problem because multiple threads may read and update the same variable at the same time without synchronization, leading to inconsistent or lost updates
+- What incorrect behavior could occur?Incorrect behavior includes wrong values such as an inaccurate count of context switches or incorrect total waiting time due to lost increments or overwritten updates.
 
 **Your Answer**:
 
@@ -111,12 +111,15 @@ Identified counters and execution log as shared data
 Race conditions exist in contextSwitchCount, completedProcessCount, and totalWaitingTime. These variables are shared between multiple threads. Without synchronization, two threads may update values at the same time causing lost updates. For example, two processes incrementing contextSwitchCount simultaneously may overwrite each other, resulting in incorrect final count]
 
 ---
+Race conditions exist in shared variables such as contextSwitchCount and totalWaitingTime. These variables are accessed and modified by multiple threads simultaneously. Concurrent access is a problem because two threads may read the same value and update it at the same time, causing lost updates. For example contextSwitchCount++;
+This operation is not atomic, so two threads incrementing it simultaneously may overwrite each other’s changes. As a result, the final value of contextSwitchCount or totalWaitingTime may be incorrect and lower than expected.
 
 ### Question 2: Locks vs Semaphores
 **Q**: Explain the difference between ReentrantLock and Semaphore. Where did you use each in your code and why?
 
 **Your Answer**:
-
+ReentrantLock is used to ensure mutual exclusion, meaning only one thread can access a critical section at a time. It is mainly used to protect shared data such as contextSwitchCount, completedProcessCount, totalWaitingTime, and the execution log to prevent race conditions and Semaphore is used to control access to a limited resource. In this code, cpuSemaphore is used to limit how many processes can use the CPU simultaneously 
+The key difference is that a lock is used for data safety (protecting critical sections), while a semaphore is used for resource management (controlling the number of concurrent threads).
 [Your answer here - explain your implementation choices
 ReentrantLock is used to protect shared data (counters and execution log) to ensure mutual exclusion. Semaphore is used to control how many processes can access the CPU simultaneously. Lock is for data safety, while semaphore is for resource limiting.]
 
@@ -125,7 +128,14 @@ ReentrantLock is used to protect shared data (counters and execution log) to ens
 ### Question 3: Deadlock Prevention
 **Q**: What is deadlock? Explain TWO prevention techniques and what you did to prevent deadlocks in your code.
 
-**Your Answer**:
+**Your Answer**:Deadlock is a situation where two or more threads are blocked forever because each thread is waiting for a resource held by another thread. One prevention technique is using try-finally blocks to ensure that locks and semaphores are always released even if an exception occurs. Another technique is maintaining consistent locking, such as using a single lock (ReentrantLock) for shared resources to avoid circular waiting.
+In this code, deadlock is prevented by always releasing the lock and semaphore inside finally blocks. For example lock.lock();
+try {
+    // critical section
+} finally {
+    lock.unlock();
+}
+This ensures that no thread holds a resource indefinitely, preventing deadlock situations
 
 [Your answer here - reference try-finally blocks, lock ordering, etc.
 Deadlock is when threads wait forever for resources held by each other. I prevented it using:
@@ -265,13 +275,12 @@ ConcurrentModificationException
 
 ### Test 4: Different Scenarios
 **Scenario tested**: [e.g., different time quantum, more processes, etc.]
-increased processe
+Increased number of processes
 **Purpose**: 
+To test how the system behaves under higher load and to check if synchronization still works correctly when more threads are competing for resources.
+**Results**: The system executed all processes successfully with stable performance and no crashes. The scheduling worked correctly and all processes finished execution
 
-**Results**: stable execution with no crashes
-
-**What I learned**: semaphore controls system load
-
+**What I learned**: I learned that the semaphore helps control system load by limiting how many processes can access the CPU at the same time, which prevents overload and keeps the system stable
 ---
 
 ## Part 5: Reflection and Learning
@@ -285,19 +294,23 @@ Synchronization can be explained as “many people using one bathroom — lock e
 [6-8 sentences about key concepts, challenges, insights]
 
 ---
+Synchronization is important when multiple threads access shared resources at the same time. Without synchronization, race conditions can occur and lead to incorrect results. I learned how tools like ReentrantLock ensure that only one thread enters a critical section at a time. I also understood how semaphores control how many threads can access a resource simultaneously. One challenge is making sure locks are always released to avoid deadlocks. Using try-finally blocks helped guarantee proper release of locks and semaphores. Overall, synchronization improves data consistency and system stability in concurrent programs
 
 ### Real-world applications:
 
 Give TWO examples where synchronization is critical:
 
-**Example 1**: 
-Banking systems updating balances
-**Example 2**: Operating system process scheduling
+**Example 1**:
+Banking systems updating balances — synchronization ensures that multiple transactions don’t corrupt the account balance.
+
+
+
+**Example 2**: Operating system process scheduling — synchronization controls how processes share CPU and system resources efficiently.
 
 ---
 
 ### How I would explain synchronization to others:
-
+Synchronization is like organizing access to shared things so no one interferes with others. Imagine many people want to use one bathroom — a lock ensures only one person can enter at a time. Without the lock, people would collide and cause problems. In programming, threads are like those people, and shared data is like the bathroom. We use locks to protect data and semaphores to control how many threads can access a resource at once. This keeps everything running smoothly without errors
 [Explain to someone who just finished Assignment 1 - use simple terms and analogies]
 
 ---
