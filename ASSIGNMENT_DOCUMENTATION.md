@@ -233,17 +233,19 @@ SharedResources.cpuSemaphore.release();
 ## Part 4: Testing and Verification (2 marks)
 
 ### Test 1: Consistency Check
-**What I tested**: Running program multiple times to verify consistent results
-multiple runs consistency
-**Testing procedure**: ran program 5 times
-```bash
+**What I tested**: Running the program multiple times to verify consistent results (multiple runs consistency).
+**Testing procedure**: I ran the program 5 times to observe whether the output remains consistent across executions
+
 # Commands used (run the program at least 5 times)
+java SchedulerSimulationSync
+java SchedulerSimulationSync
+java SchedulerSimulationSync
+java SchedulerSimulationSync
+java SchedulerSimulationSync
 ```
 
-**Results**: consistent final counts
-(Show that running multiple times produces consistent, correct results)
-
-**Why synchronization is necessary**: 
+**Results**: The program produced consistent final counts in all runs with no variation in the output.
+**Why synchronization is necessary**: Without synchronization, race conditions could occur when multiple threads access shared variables like contextSwitchCount, completedProcessCount, and totalWaitingTime at the same time. This could lead to lost updates or incorrect final values because threads may overwrite each other’s changes. These shared resources need protection to ensure data consistency and correct scheduling result
 (Explain what race conditions COULD occur without synchronization, even if you didn't observe them. Explain which shared resources need protection and why.)
 
 **Conclusion**: synchronization prevents race conditions
@@ -317,7 +319,7 @@ Synchronization is like organizing access to shared things so no one interferes 
 
 ## Part 6: GitHub Repository Information
 
-**Repository URL**: 
+**Repository URL**: https://github.com/leen-Abdulaziz-2001/Leen-Abdulaziz-OS-Assignment3-Starter
 
 **Number of commits**: 
 
